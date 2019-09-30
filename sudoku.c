@@ -18,48 +18,41 @@ typedef struct {
 	int row;
 } Parameters;
 
-int validationRow[9] = {0};
-int validationLine[9] = {0};
-int validationBlock[9] = {0};
+int validationRow[9] = {0};	// Tableau indiquant si les colonnes sont valides.
+int validationLine[9] = {0};	// Tableau indiquant si les lignes sont valides.
+int validationBlock[9] = {0};	// Tableau indiquant si les sous-grilles sont valides.
 
 void *threadProcessRow(void *arg) {
 	int row = ((Parameters*) arg)->row;
-	int result[9] = {0};
-	for (int i = 0; i < 9; i += 1) {
-		printf("%d\t", sudoku[i][row]);
-		result[sudoku[i][row]-1] += 1;
-	}
-	printf("\n");
-
+	int result[9] = {0};	// Tableau dont chaque cellule indique le nombre d'apparition de son indice dans la colonne de sudoku.
 	for (int i = 0; i < 9; i += 1)
-		printf("%d\t", result[i]);
-	printf("\n");
+		result[sudoku[i][row]-1] += 1;
 	for (int i = 0; i < 9; i += 1) {
 		if (result[i] != 1)
 			pthread_exit(EXIT_SUCCESS);
 	}
-	validationRow[row] = 1;
+	validationRow[row] = 1;	// S'il y a exactement une fois les chiffres de 1 à 9 dans la colonne, on met à jour le tableau validant la colonne.
 	pthread_exit(EXIT_SUCCESS);
 }
 
 void *threadProcessLine(void *arg) {
 	int line = ((Parameters*) arg)->line;
-	int result[9] = {0};
+	int result[9] = {0};	// Tableau dont chaque cellule indique le nombre d'apparition de son indice dans la ligne de sudoku.
 	for (int i = 0; i < 9; i += 1)
 		result[sudoku[line][i]-1] += 1;
 	for (int i = 0; i < 9; i += 1) {
 		if (result[i] != 1)
 			pthread_exit(EXIT_SUCCESS);
 	}
-	validationLine[line] = 1;
+	validationLine[line] = 1;	// S'il y a exactement une fois les chiffres de 1 à 9 dans la ligne, on met à jour le tableau validant la ligne.
 	pthread_exit(EXIT_SUCCESS);
 }
 
 void *threadProcessBloc(void *arg) {
 	Parameters *data = (Parameters*) arg;
-	int result[9] = {0};
-	for (int i = 0; i < 3; i += 1) {
-		for (int j = 0; j < 3; j += 1) {
+	int result[9] = {0};	// tableau dont chaque cellule indique le nombre d'apparition de son indice dans la sous-grille de sudoku.
+	for (int i = 0; i < 9/3; i += 1) {
+		for (int j = 0; j < 9/3; j += 1) {
 			result[sudoku[data->line+i][data->row+j]-1] += 1;
 		}
 	}
@@ -67,55 +60,56 @@ void *threadProcessBloc(void *arg) {
 		if (result[i] != 1)
 			pthread_exit(EXIT_SUCCESS);
 	}
-	validationBlock[data->line + data->row/3] = 1;
+	validationBlock[data->line + data->row/3] = 1;	// S'il y a exactement une fois les chiffres de 1 à 9 dans la sous-grille, on met à jour le tableau validant la sous-grille.
 	pthread_exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char const *argv[]) {
 
-	int count = 0;
-	pthread_t tid[27];
-	pthread_attr_t attr[27];
-	for (int i = 0; i < 27; i += 1)
-		pthread_attr_init(&attr[i]);
-
-	Parameters *data = (Parameters*) malloc(sizeof(Parameters));
+	int count = 0;	// Compteur des threads.
+	pthread_t tid[9*3];	// Tableau contenant les identifiants des différents threads.
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	Parameters *data[9*3];	// Tableau contenant les différents paramètres que l'on va passer en paramètres des threads.
 
 	for (int i = 0; i < 9; i += 1) {
-		data->line = i;
-		data->row = 0;
-		pthread_create(&tid[count], &attr[count], threadProcessLine, data);
+		data[count] = (Parameters*) malloc(sizeof(Parameters));
+		data[count]->line = 0;
+		data[count]->row = i;
+		pthread_create(&tid[count], &attr, threadProcessRow, data[count]);
 		count += 1;
 	}
 
 	for (int i = 0; i < 9; i += 1) {
-		data->line = 0;
-		data->row = i;
-		pthread_create(&tid[count], &attr[count], threadProcessRow, data);
+		data[count] = (Parameters*) malloc(sizeof(Parameters));
+		data[count]->line = i;
+		data[count]->row = 0;
+		pthread_create(&tid[count], &attr, threadProcessLine, data[count]);
 		count += 1;
 	}
 
-	for (int i = 0; i < 9; i += 3) {
+	for (int i = 0; i < 9; i += 3) {	// On renseigne une sous-grille par la ligne et la colonne de sa première case.
 		for (int j = 0; j < 9; j += 3) {
-			data->line = i;
-			data->row = j;
-			pthread_create(&tid[count], &attr[count], threadProcessBloc, data);
+			data[count] = (Parameters*) malloc(sizeof(Parameters));
+			data[count]->line = i;
+			data[count]->row = j;
+			pthread_create(&tid[count], &attr, threadProcessBloc, data[count]);
 			count += 1;
 		}
 	}
 
-	for (int i = 0; i < 27; i += 1)
-		pthread_join(tid[i], NULL);
-
-	free(data);
+	for (int i = 0; i < 9*3; i += 1) {
+		pthread_join(tid[i], NULL);	// On attend que touts les threads se terminent.
+		free(data[i]);	// Libération de la mémoire dynamique.
+	}
 
 	for (int i = 0; i < 9; i += 1) {
-		if (!validationRow[i]) {
-			printf("FALSE %d\n", i);
+		if (!validationRow[i] || !validationLine[i] || !validationBlock[i]) {	// Si une ligne ou une colonne ou une sous-grille n'est pas valide.
+			printf("FALSE\n");
 			exit(EXIT_SUCCESS);
 		}
 	}
-	
+
 	printf("TRUE\n");
 	exit(EXIT_SUCCESS);
 }
