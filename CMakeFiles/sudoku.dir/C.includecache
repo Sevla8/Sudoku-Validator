@@ -11,8 +11,6 @@ stdio.h
 -
 stdlib.h
 -
-unistd.h
--
 pthread.h
 -
 thread.h
@@ -24,10 +22,6 @@ parameter.h
 
 /home/sevla/Projects/Sudoku-Validator/parameter.h
 
-/home/sevla/Projects/Sudoku-Validator/reader.c
-reader.h
-/home/sevla/Projects/Sudoku-Validator/reader.h
-
 /home/sevla/Projects/Sudoku-Validator/reader.h
 stdio.h
 -
@@ -37,11 +31,7 @@ thread.h
 /home/sevla/Projects/Sudoku-Validator/thread.h
 
 /home/sevla/Projects/Sudoku-Validator/thread.h
-stdio.h
--
 stdlib.h
--
-unistd.h
 -
 pthread.h
 -
