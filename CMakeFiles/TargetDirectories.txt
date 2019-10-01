@@ -1,0 +1,3 @@
+/home/sevla/Projects/Sudoku-Validator/CMakeFiles/rebuild_cache.dir
+/home/sevla/Projects/Sudoku-Validator/CMakeFiles/sudoku.dir
+/home/sevla/Projects/Sudoku-Validator/CMakeFiles/edit_cache.dir
