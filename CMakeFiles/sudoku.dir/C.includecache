@@ -26,13 +26,7 @@ parameter.h
 stdio.h
 -
 
-/home/sevla/Projects/Sudoku-Validator/thread.c
-thread.h
 /home/sevla/Projects/Sudoku-Validator/thread.h
-
-/home/sevla/Projects/Sudoku-Validator/thread.h
-stdlib.h
--
 pthread.h
 -
 parameter.h
