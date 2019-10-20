@@ -12,6 +12,7 @@ set(HEADERS
 	thread.h
 	reader.h
 	parameter.h
+	error.h
 	)
 
 find_package (Threads)

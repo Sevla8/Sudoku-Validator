@@ -6,6 +6,16 @@ default_target: all
 
 .PHONY : default_target
 
+# The main recursive all target
+all:
+
+.PHONY : all
+
+# The main recursive preinstall target
+preinstall:
+
+.PHONY : preinstall
+
 #=============================================================================
 # Special targets provided by cmake.
 
@@ -35,10 +45,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /snap/cmake/89/bin/cmake
+CMAKE_COMMAND = /snap/cmake/118/bin/cmake
 
 # The command to remove a file.
-RM = /snap/cmake/89/bin/cmake -E remove -f
+RM = /snap/cmake/118/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -52,20 +62,10 @@ CMAKE_BINARY_DIR = /home/sevla/Projects/Sudoku-Validator
 #=============================================================================
 # Directory level rules for the build root directory
 
-# The main recursive "all" target.
-all: CMakeFiles/sudoku.dir/all
-
-.PHONY : all
-
 # The main recursive "clean" target.
 clean: CMakeFiles/sudoku.dir/clean
 
 .PHONY : clean
-
-# The main recursive "preinstall" target.
-preinstall:
-
-.PHONY : preinstall
 
 #=============================================================================
 # Target rules for target CMakeFiles/sudoku.dir
@@ -76,6 +76,11 @@ CMakeFiles/sudoku.dir/all:
 	$(MAKE) -f CMakeFiles/sudoku.dir/build.make CMakeFiles/sudoku.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sevla/Projects/Sudoku-Validator/CMakeFiles --progress-num=1,2,3,4 "Built target sudoku"
 .PHONY : CMakeFiles/sudoku.dir/all
+
+# Include target in all.
+all: CMakeFiles/sudoku.dir/all
+
+.PHONY : all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/sudoku.dir/rule: cmake_check_build_system

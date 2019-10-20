@@ -1,15 +1,33 @@
 #include "reader.h"
 
-int reader() {	// Fonction permettant de lire l'entrée du programme.
+int reader(char* filename, Parameters* param) {
+	FILE* file = NULL;
+	file = fopen(filename, "r");
+	if (file == NULL) {
+		perror("fopen()");
+		return -2;
+	}
 	for (int i = 0; i < 9; i += 1) {
 		for (int j = 0; j < 9; j += 1) {
-			char c1;
-			scanf("%c ", &c1);	// L'espace pour enlever du buffer les caractere appartenant à IFS.
-			int number = c1 - '0';	// Conversion de (char 'chiffre') en (int chiffre).
-			if (number < 0 || number > 9)	// Si l'entrée comporte autre chose qu'un chiffre.
+			int number = fgetc(file) - '0';
+			if (number < 1 || number > 9) {
+				param->line = i;
+				param->row = j;
+				if (number == '$' || number == '%' || number == '!') {
+					fclose(file);
+					return -4;
+				}
+				fclose(file);
 				return -1;
+			}
 			sudoku[i][j] = number;
+			number = fgetc(file);
+			if (j != 8 && (number == '\n' || number == '\r' || number == EOF) || j == 8 && (number != '\n' && number != '\r' && number != EOF)) { // Some systems use '\r' as line separator
+				fclose(file);
+				return -3;
+			}
 		}
 	}
+	fclose(file);
 	return 0;
 }

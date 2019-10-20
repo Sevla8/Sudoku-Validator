@@ -3,6 +3,7 @@
 
 #include <pthread.h>
 #include "parameter.h"
+#include "error.h"
 
 extern int sudoku[9][9];
 extern int validationRow[9];
