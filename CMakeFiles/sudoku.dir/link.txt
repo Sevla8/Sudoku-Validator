@@ -1,1 +1,0 @@
-/usr/bin/cc   -rdynamic CMakeFiles/sudoku.dir/main.c.o CMakeFiles/sudoku.dir/thread.c.o CMakeFiles/sudoku.dir/reader.c.o  -o sudoku -lpthread 
